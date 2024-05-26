@@ -1,0 +1,64 @@
+﻿@model WebBanSua.Models.KhachHang
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<head>
+    
+    <title>Đăng Nhập</title>
+    <link rel="stylesheet" href="~/css/css_login.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+       .img-logo {
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
+</head>
+<body>
+    <br />
+     <form asp-action="Login" class="container-login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="login">
+        <h3 style="text-align:center;">LOGIN</h3>
+            <img class="img-logo" src="~/img/logo-pozaa2.png" alt="Linh đẹp trai" />
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-primary">
+                    <strong>Đăng Nhập thất bại:</strong> Thông tin tài khoản hoặc mật khẩu không chính xác
+                </div>
+            }
+            @if (ViewBag.Error1 != null)
+            {
+                <div class="alert alert-primary">
+                    <strong>Đăng Nhập thất bại:</strong> Không được để trống thông tin
+                </div>
+            }
+        <label asp-for="Email" class="control-label login-label"></label>
+         <input asp-for="Email" class="form-control login-input" />
+         <span asp-validation-for="Email" class="text-danger"></span>
+
+       <label asp-for="Password" class="control-label login-label"></label>
+         <input asp-for="Password" type="password" class="form-control login-input" />
+         <span asp-validation-for="Password" class="text-danger"></span>
+        <button type="submit"class="login-btn btn btn-primary">Login</button>
+        <p class="register-question">
+            <span>Bạn chưa có tài khoản ?</span>
+            <a asp-action="Register" asp-controller="Home" class="register-text">Đăng ký</a>
+           
+        </p>
+
+            <p class="register-question">
+                <span>Bạn quên mật khẩu ?</span>
+                <a asp-action="Forgot" asp-controller="KhachHang" class="register-text">Quên mật khẩu</a>
+
+            </p>
+        
+    </div>
+    </form>
+
+</body>

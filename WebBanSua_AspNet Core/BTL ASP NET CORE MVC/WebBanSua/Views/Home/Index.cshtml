@@ -1,0 +1,119 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore
+@model IEnumerable<WebBanSua.Models.SanPham> 
+@{
+    ViewData["Title"] = "Home Page";
+    var spBanChay =  Model.Where(x => x.BestSeller == true);
+}
+<link href='~/css/row_product.css' rel='stylesheet'>
+<link href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
+<style>
+    .buy:hover{
+        cursor:pointer;
+    }
+    a{
+        text-decoration:none !important;
+    }
+
+    .content-category{
+        height:100px;
+        margin-bottom:40px;
+    }
+    .slide{
+        margin-bottom:30px;
+    }
+</style>
+
+ <div class="content">
+    @{
+        WebBanSua.Models.CuaHangBanSuaContext _context = new WebBanSua.Models.CuaHangBanSuaContext();
+        var danhmuc = _context.DanhMucSps.ToList();
+    }
+
+    <div class="content-category">
+        @foreach (var item in danhmuc)
+        {
+
+            <a asp-action="SanPhamTheoDanhMuc" asp-controller="SanPham" asp-route-id="@item.MaDm" asp-route-tenDm="@item.TenDm">
+                <img src="@item.AnhDm" alt="" style="width:60px;"> <article>@item.TenDm</article>
+
+            </a>
+            
+
+
+        }
+
+
+              
+            </div>
+          
+    <div class="slide">
+        <div class="dieu-huong">
+            <i class='bx bxs-chevron-left' onclick="prevSlide();"></i>
+            <i class='bx bxs-chevron-right' onclick="nextSlide();"></i>
+        </div>
+        <div class="chuyen-slide">
+            <img src="~/img/8cf2d48c514f6ea0af435f6e242bd51b.jpg" alt="">
+            <img src="~/img/slide/slide-2.jpg" alt="">
+            <img src="~/img/slide/slide-3.png" alt="">
+            <img src="~/img/slide/slide-4.jpg" alt="">
+        </div>
+    </div>
+          <div class="container mb-">
+     <div class="title-product"><h2>Sản phẩm nổi bật</h2></div>
+    	<div class="row">
+            @foreach (var item in spBanChay)
+           {
+                <div class="col-md-4" style="margin-top:30px;">
+                    <div class="card">
+                        <div class="card-img-product">
+                            <img src="@item.AnhSp" alt="">
+                        </div>
+                        <br />
+                        <div class="card-title">
+                            @item.TenSp
+                        </div>
+                        <div class="card-price">
+                            @item.GiaSp.ToString("#,##0") VNĐ
+                        </div>
+                        <div class="card-diseption">
+                            <div class="card-action">
+                                @if (Context.Session.GetString("MaKh") != null)
+                                {
+                                    <button> <a asp-action="Details" asp-controller = "SanPham" asp-route-id="@item.MaSp" asp-route-ten="@item.TenSp" style="text-decoration:none; color:white">Chi Tiết</a></button>
+                                    <button onclick="AddToCartList(@item.MaSp)"  id="themvaogio">Thêm<i class='bx bxs-cart-add'></i></button>
+                                }
+                                else
+                                {
+                                    <button> <a asp-action="Details" asp-controller="SanPham" asp-route-id="@item.MaSp" asp-route-ten="@item.TenSp" style="text-decoration:none; color:white">Chi Tiết</a></button>
+
+                                    <button> <a asp-action="Login" asp-controller="Home" style="text-decoration:none; color:white">Mua Ngay</a></button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           }
+    	</div>
+    </div>   
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger intent="WELCOME"
+                  chat-title="PozaaTea - From Linh Lê"
+                  agent-id="9e26167c-6896-48fa-98eb-030a9e613d19"
+                  language-code="en"></df-messenger>
+
+
+</div>
+       
+      <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'></script>
+<script type='text/javascript'>var myLink = document.querySelector('a[href="#"]');
+                                myLink.addEventListener('click', function(e) {
+                                  e.preventDefault();
+                                });
+</script>
+
+
+
+

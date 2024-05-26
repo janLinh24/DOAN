@@ -1,0 +1,283 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<WebBanSua.Models.DonHang>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_ProductLayout.cshtml";
+}
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.SuccessMessage
+    </div>
+}
+<head>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
+</head>
+<body>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    
+        <div class="container p-0">
+            <h1 class="h3 mb-3">Tài Khoản</h1>
+            <div class="row">
+                <div class="col-md-5 col-xl-4">
+
+                    <div class="card-profile">
+                        <div class="card-profile-header">
+                            <h5 class="card-title mb-0">Chỉnh Sửa Thông Tin</h5>
+                        </div>
+
+                        <div class="list-group list-group-flush" role="tablist">
+                            <a class="list-group-item list-group-item-action" asp-action="UserDashboard" asp-controller="Home" role="tab">
+                                <i class='bx bx-user'></i> Tài Khoản
+                            </a>
+                            <a class="list-group-item list-group-item-action" asp-action="ChangePassword" asp-controller="Home" role="tab">
+                                <i class='bx bx-lock-alt'></i> Mật Khẩu
+                            </a>
+                            <a class="list-group-item list-group-item-action" asp-action="Index" asp-controller="DonHangs" role="tab">
+                                <i class='bx bx-shopping-bag'></i> Đơn Mua
+                            </a>
+
+                            <a class="list-group-item list-group-item-action" asp-action="DonHangHuy" asp-controller="DonHangs" role="tab">
+                                <i class='bx bx-bell'></i> Đơn Hủy
+                            </a>
+                            <a class="list-group-item list-group-item-action" asp-action="Logout" asp-controller="Home" role="tab">
+                                <i class='bx bx-log-out-circle'></i> Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7 col-xl-10">
+
+                    <div class="rounded">
+                        <div class="table-responsive table-borderless">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Họ Tên</th>
+                                        <th>Hình Thức TT</th>
+                                        <th>Tổng Tiền</th>
+                                        <th>Ngày Tạo</th>
+                                        <th>Trạng Thái Đơn Hàng</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        WebBanSua.Models.CuaHangBanSuaContext _context = new WebBanSua.Models.CuaHangBanSuaContext();
+                                        var maKH = Context.Session.GetString("MaKh");
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="cell-1">
+                                            <td>@Context.Session.GetString("TenKh")</td>
+                                            <td><span class="badge badge-success" style="color:black">COD - Thanh Toán Khi Nhận</span></td>
+                                            <td>@item.TongTien.ToString("#,##0") VNĐ</td>
+                                            <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
+                                        @if(item.TrangThaiHuyDon == 1)
+                                        {
+                                            <td style="color:red; font-weight:bold">Chờ Xác Nhận</td>
+                                        }
+                                        else if(item.TrangThaiHuyDon == 2)
+                                        {
+                                            <td style="color:red; font-weight:bold">Đã xác nhận,chờ giao hàng</td>
+
+                                        }
+                                        <td class="align-middle" >
+                                            <a asp-action="Details" asp-route-id="@item.MaDh" class="btn btn-primary" style="font-size:12px;">Xem</a>
+                                            @if(item.TrangThaiHuyDon != 2)
+                                            {
+                                                <form method="post" asp-action="HuyDonHang" asp-route-id="@item.MaDh">
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit" class="btn btn-primary" style="font-size:12px;" onclick="confirmHuyDonHang(@item.MaDh)">Hủy</button>
+                                                </form>
+                                            }
+                                           
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <style type="text/css">
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+        .cell-1 {
+            border-collapse: separate;
+            border-spacing: 0 4em;
+            background: #fff;
+            border-bottom: 5px solid transparent;
+            /*background-color: gold;*/
+            background-clip: padding-box;
+        }
+
+        tbody,
+        thead {
+            text-align: center;
+            background: #fff;
+        }
+
+
+        .toggle-btn {
+            width: 40px;
+            height: 21px;
+            background: grey;
+            border-radius: 50px;
+            padding: 3px;
+            cursor: pointer;
+            -webkit-transition: all 0.3s 0.1s ease-in-out;
+            -moz-transition: all 0.3s 0.1s ease-in-out;
+            -o-transition: all 0.3s 0.1s ease-in-out;
+            transition: all 0.3s 0.1s ease-in-out;
+        }
+
+            .toggle-btn > .inner-circle {
+                width: 15px;
+                height: 15px;
+                background: #fff;
+                border-radius: 50%;
+                -webkit-transition: all 0.3s 0.1s ease-in-out;
+                -moz-transition: all 0.3s 0.1s ease-in-out;
+                -o-transition: all 0.3s 0.1s ease-in-out;
+                transition: all 0.3s 0.1s ease-in-out;
+            }
+
+            .toggle-btn.active {
+                background: blue !important;
+            }
+
+                .toggle-btn.active > .inner-circle {
+                    margin-left: 19px;
+                }
+
+        body {
+            margin-top: 20px;
+        }
+
+        .card-profile {
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 15px 1px rgba(52,40,104,.08);
+        }
+
+        .card-profile {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid #e5e9f2;
+            border-radius: .2rem;
+        }
+
+        .card-header:first-child {
+            border-radius: calc(.2rem - 1px) calc(.2rem - 1px) 0 0;
+        }
+
+        .card-profile-header {
+            border-bottom-width: 1px;
+        }
+
+        .card-profile-header {
+            padding: .75rem 1.25rem;
+            margin-bottom: 0;
+            color: inherit;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e9f2;
+        }
+
+        #GioiTinh {
+            border: 1px solid #d2d6da;
+            border-radius: 14px;
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 6px;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        var password = document.getElementById("inputPasswordNew")
+            , confirm_password = document.getElementById("inputPasswordNew2");
+
+        function validatePassword() {
+            if (password.value != confirm_password.value) {
+                confirm_password.setCustomValidity("Mật khẩu không trùng khớp !");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+    </script>
+    <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'></script>
+    <script type='text/javascript' src='#'></script>
+    <script type='text/javascript' src='#'></script>
+    <script type='text/javascript'>
+        $(document).ready(function () {
+
+            $('.toggle-btn').click(function () {
+                $(this).toggleClass('active').siblings().removeClass('active');
+            });
+
+        });</script>
+    <script type='text/javascript'>
+        var myLink = document.querySelector('a[href="#"]');
+        myLink.addEventListener('click', function (e) {
+            e.preventDefault();
+        });</script>
+
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                // Ẩn thông báo thành công sau 5 giây
+                $('.alert-success').fadeOut();
+            }, 5000); // Thời gian đợi là 5000ms (tương đương 5 giây)
+        });
+
+    </script>
+    <script>
+        function confirmHuyDonHang(id) {
+            if (confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+                // Nếu người dùng chấp nhận, thì submit form
+                document.getElementById("formHuyDonHang").submit();
+            } else {
+                // Nếu không, không làm gì cả
+                return false;
+            }
+        }
+    </script>
+
+</body>

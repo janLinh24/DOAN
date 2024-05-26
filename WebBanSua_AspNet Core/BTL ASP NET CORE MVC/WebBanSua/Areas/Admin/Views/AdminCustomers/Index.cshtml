@@ -1,0 +1,132 @@
+﻿@model IEnumerable<WebBanSua.Models.KhachHang>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div id="successMessage" class="alert alert-success" role="alert">
+        @ViewBag.SuccessMessage
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<script>
+    // Lấy thời gian chờ từ ViewBag
+    var messageTimeout = @ViewBag.MessageTimeout;
+
+    // Ẩn thông báo sau một khoảng thời gian
+    setTimeout(function () {
+        var successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            successMessage.style.display = 'none';
+        }
+    }, messageTimeout);
+</script>
+<head> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css">
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+</head>
+
+<body>
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+                <h4>Danh Sách Khách Hàng</h4>
+                <a asp-action="ThemKH" asp-controller="AdminCustomers" asp-area="Admin">Thêm Khách Hàng</a>
+            </div>
+            
+           @*  @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success" id="successMessage">
+                    @TempData["SuccessMessage"]
+                </div>
+
+                <script>
+                    setTimeout(function () {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, @ViewBag.MessageTimeout);
+                </script>
+            } *@
+
+            <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table id="example" class="table align-items-center justify-content-center mb-0 table-striped" style="font-size:20px;">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Khách Hàng</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Ngày Sinh</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Giới Tính</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Email</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Số Điện Thoại</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Ngày Tạo</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div>
+                                                <img src="@Html.DisplayFor(modelItem => item.AvatarKh)" class="avatar avatar-sm me-2">
+                                            </div>
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 text-sm font-weight-bold" style="font-size:12px;">@Html.DisplayFor(modelItem => item.TenKh)</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold" style="font-size:12px;">@item.Ngaysinh.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold" style="font-size:12px;">@Html.DisplayFor(modelItem => item.GioiTinh)</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold" style="font-size:12px;">@Html.DisplayFor(modelItem => item.Email)</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold" style="font-size:12px;">@Html.DisplayFor(modelItem => item.Phone)</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold" style="font-size:12px;">@Html.DisplayFor(modelItem => item.CreateDate)</span>
+                                    </td>
+                                    <td class="align-middle">
+
+                                        <a asp-action="Details" asp-route-id="@item.MaKh" class="btn btn-primary" style="font-size:12px;">Xem</a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <form asp-action="XoaKH" method="post">
+                                            <input type="hidden" name="id" value="@item.MaKh" />
+                                            <input type="submit" value="Xóa" class="btn btn-danger" />
+                                        </form>
+
+                                    </td>
+                                   
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/js/datatables-bt5.js"></script>
+</body>
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+

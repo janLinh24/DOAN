@@ -1,0 +1,171 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore
+@model WebBanSua.Models.SanPham
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_ProductLayout.cshtml";
+    WebBanSua.Models.CuaHangBanSuaContext db = new WebBanSua.Models.CuaHangBanSuaContext();
+    var danhMuc1 =  db.SanPhams.Where(x => x.BestSeller == true);
+ 
+
+}
+@{
+    Context.Session.SetString("ReturnUrl", Context.Request.Path);
+}
+
+
+
+<link href='~/css/row_product.css' rel='stylesheet'>
+<link href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<style>
+    .content-sp-noibat{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 40px;
+    margin: 60px 0;
+    border-radius: 20px
+}
+    .buy:hover{
+        cursor:pointer;
+    }
+
+    .slide-detail-product{
+        margin-left:-100px;
+    }
+   
+    
+  
+</style>
+
+ <div class="location-page">
+    <section class="c-breadcrumbs">
+        <div class="container">
+            <span class="item">
+                <a asp-action="Index" asp-controller="Home">Trang Chủ</a>
+            </span>
+
+            > <a class="item" asp-action="Index" asp-controller="SanPham">Sản Phẩm</a>
+            <span class="item"> > @ViewBag.tenSP</span>
+        </div>
+    </section>
+        </div>
+      
+        <div class="content-chi-tietsp">
+            <article class="col-sm-9">
+                <div class="row">
+                    <div class="col-md-5">
+ <div class="slide-detail-product">
+    <div class="dieu-huong-detail">
+      <i class='bx bxs-chevron-left' onclick="prevSlideDetail();"></i>
+      <i class='bx bxs-chevron-right' onclick="nextSlideDetail();"></i>
+    </div>
+    <div class="chuyen-slide-detail">
+      <img src="@Url.Content(Model.AnhSp)" alt="" >
+                        <img src="@Url.Content(Model.AnhSp)" alt="">
+                        <img src="@Url.Content(Model.AnhSp)" alt="">
+                    </div>
+  </div>
+                    </div>
+                    <div class="col-md-7 container-detail">
+                        <div class="title-tensp">@Model.TenSp</div>
+                        <div class="gia-chitiet">@Model.GiaSp.ToString("#,##0") VNĐ</div>
+                        <div class="card-size">
+                           <label for="txtsoLuong">Số Lượng:</label>
+                           <input id="txtsoLuong" name="txtsoLuong" max="100" step="1" value="1" type="number" style="width:80px; text-align:center; margin-left:8px;"/>
+                        </div>
+                        <div class="btn-them-gio">
+                    @if (Context.Session.GetString("MaKh") != null)
+                    {
+                        <button class="ajax-them-gio" onclick="AddToCart(@Model.MaSp)">Thêm Vào Giỏ <i class='bx bxs-cart-add'></i></button>
+
+                    }
+                    else
+                    {
+                        <button class="ajax-them-gio" onclick="alert('Vui lòng đăng nhập để thêm vào giỏ hàng!')">Thêm Vào Giỏ <i class='bx bxs-cart-add'></i></button>
+
+                    }
+
+                </div>
+                        <div class="container-thongtin-sp">
+                            <div class="row">
+                                <div class="col-sm-4 title-chitiet">DANH MỤC</div>
+                                <div class="col-sm-8 content-chitiet">@Model.MaDmNavigation.TenDm</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-4 title-chitiet">NƠI SẢN XUẤT</div>
+                                <div class="col-sm-8 content-chitiet">Pozaatea - Việt Nam</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 title-chitiet">MÔ TẢ SẢN PHẨM</div>
+                                <div class="col-sm-8 content-chitiet">@Model.MotaSp</div>
+                            </div>
+                            
+                            
+                        </div>
+         
+                </div>
+                </div>
+            </article>
+        </div>
+        <hr />
+        
+                      
+
+        
+
+<div class="container mt-5">
+     <div class="title-product"><h2>Sản phẩm nổi bật</h2></div>
+    	<div class="row">
+            @foreach (var item in danhMuc1)
+           {
+            <div class="col-md-4" style="margin-top:30px;">
+                <div class="card">
+                    <div class="card-img-product">
+                        <img src="@Url.Content(item.AnhSp)" alt="">
+                    </div>
+                    <br />
+                    <div class="card-title">
+                        @item.TenSp
+                    </div>
+                    <div class="card-price">
+                        @item.GiaSp.ToString("#,##0") VNĐ
+                    </div>
+                    <div class="card-diseption">
+                        <div class="card-action">
+                          
+                                @* <button> <a asp-action="Details" asp-controller="SanPham" asp-route-id="@item.MaSp" asp-route-ten="@item.TenSp" style="text-decoration:none; color:white">Mua Ngay</a></button>
+                                <button onclick="AddToCartList(@item.MaSp)" id="themvaogio">Thêm<i class='bx bxs-cart-add'></i></button> *@
+                            @if (Context.Session.GetString("MaKh") != null)
+                            {
+                                <button> <a asp-action="Details" asp-route-id="@item.MaSp" asp-route-ten="@item.TenSp" asp-route-idDm="@item.MaDm" style="text-decoration:none; color:white">Mua Ngay</a></button>
+
+                                <button onclick="AddToCartList(@item.MaSp)" id="themvaogio">Thêm<i class='bx bxs-cart-add'></i></button>
+                            }
+                            else
+                            {
+                                <button> <a asp-action="Details" asp-route-id="@item.MaSp" asp-route-ten="@item.TenSp" asp-route-idDm="@item.MaDm" style="text-decoration:none; color:white">Chi tiết</a></button>
+
+                                <button> <a asp-action="Login" asp-controller="Home" style="text-decoration:none; color:white">Mua Ngay</a></button>
+                            }
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+           }
+    	</div>
+    </div>
+<script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'></script>
+<script type='text/javascript'>var myLink = document.querySelector('a[href="#"]');
+                                myLink.addEventListener('click', function(e) {
+                                  e.preventDefault();
+                                });
+</script>
+                            

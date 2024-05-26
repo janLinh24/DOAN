@@ -1,0 +1,129 @@
+﻿@using Microsoft.AspNetCore.Http
+@model List<WebBanSua.ModelViews.CartItem>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_ProductLayout.cshtml";
+}
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/cart.css" />
+<div class="container padding-bottom-3x mb-1">
+    <!-- Shopping Cart-->
+    @if(Model != null && Model.Count()>0)
+        {
+                <div class="table-responsive shopping-cart">
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên Sản Phẩm</th>
+                    <th class="text-center">Số Lượng</th>
+                    <th class="text-center">Đơn Giá</th>
+                    <th class="text-center">Thành Tiền</th>
+                    <th class="text-center"><a class="btn btn-sm btn-outline-danger" onclick="return confirmDelete()" asp-action="CleanCart" asp-controller="GioHang">Xóa tất cả</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var thanhtien = item.sanPham.GiaSp * item.soLuong;
+                        <tr>
+                    <td>
+                        <div class="product-item">
+                            <a class="product-thumb" asp-action="Details" asp-route-id="@item.sanPham.MaSp"><img src="@Url.Content(item.sanPham.AnhSp)" alt="Product"></a>
+                            <div class="product-info">
+                                 
+                                <h4 class="product-title"><a asp-action="Details" asp-route-id="@item.sanPham.MaSp">@item.sanPham.TenSp</a></h4><span><em>Size:</em> 350 ml</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                       
+
+                                <div class="count-input">
+                                    <label for="txtsoLuong_@item.sanPham.MaSp">Số Lượng:</label>
+                                    <input onclick="UpdateCart(@item.sanPham.MaSp)" id="txtsoLuong_@item.sanPham.MaSp" name="txtsoLuong_@item.sanPham.MaSp" max="100" step="1" value="@item.soLuong" type="number" style="width:80px; text-align:center; margin-left:8px;" />
+                                </div>
+                    </td>
+                    <td class="text-center text-lg text-medium">@item.sanPham.GiaSp.ToString("#,##0") VNĐ</td>
+                     <td class="text-center text-lg text-medium">@thanhtien.ToString("#,##0") VNĐ</td>
+                    <td class="text-center"><a href="" class="remove-from-cart" data-toggle="tooltip" title="" data-original-title="Remove item" onclick="RemoveCart(@item.sanPham.MaSp)" ><i class="fa fa-trash"></i></a></td>
+                </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+    <div class="shopping-cart-footer">
+        
+        <div class="column text-lg" style="font-weight:bold">Tổng tiền: <span class="text-medium">@Model.Sum(x=> x.TongTien).ToString("#,##0") VNĐ</span></div>
+            <div class="column"><a class="btn btn-success" asp-action="Index" asp-controller="Checkout">Mua Hàng</a></div>
+
+    </div>
+        }
+        else
+        {
+            <h3 style="margin-top:100px !important;">Giỏ Hàng Của Bạn Đang Trống</h3>
+        }
+
+    <div class="shopping-cart-footer">
+        <div class="column"><a class="btn btn-outline-secondary" asp-action="Index" asp-controller="SanPham"><i class="icon-arrow-left"></i>&nbsp;Quay Lại Mua Thêm</a></div>
+        
+        
+
+        
+       
+    </div>
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm('Bạn có chắc chắn muốn xóa tất cả các mục trong giỏ hàng?');
+    }
+</script>
+
+ <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+       <script type="text/javascript">
+           function RemoveCart(Id){
+              $.ajax({
+                   url: '/giohang/remove',
+                   type: 'POST',
+                   data:{ maSP: Id},
+                  success: function(data){ 
+                         console.log(data);
+                         location.reload();
+                           },
+                    error: function(){
+                         Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Đã có lỗi xảy ra',
+                     showConfirmButton: false,
+                        timer: 1500
+                    });
+                    }
+               });
+           }
+
+           function UpdateCart(Id){
+        var soLuong = $('#txtsoLuong_' + Id).val();
+        $.ajax({
+            url: '/giohang/update-cart',
+            type: 'POST',
+            data: { maSP: Id, soLuong: soLuong },
+            success: function (data) {
+                console.log(data);
+                location.reload();
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Đã có lỗi xảy ra',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+           }
+       </script>

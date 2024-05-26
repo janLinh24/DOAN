@@ -1,0 +1,157 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore
+@model IEnumerable<WebBanSua.Models.SanPham>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_ProductLayout.cshtml";
+    var spBest = Model.Where(p => p.BestSeller == true);
+
+}
+
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/page-list.css" rel="stylesheet">
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="header" class="location-page" style="margin-bottom:20px;">
+        <section class="c-breadcrumbs">
+
+
+            <div class="container">
+                <span class="item"><a asp-action="Index" asp-controller="Home">Trang chủ</a></span>
+                <span class="item"> > @ViewBag.Ten </span>
+            </div>
+        </section>
+    </div>
+    <div class="container bootdey" style="margin-top:20px;">
+        <div class="col-md-3">
+            <section class="panel">
+                @*   <div class="panel-body">
+                <input type="text" placeholder="Tìm Sản Phẩm" class="form-control" />
+                </div> *@
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    Danh Mục Sản Phẩm
+                </header>
+                <div class="panel-body">
+                   
+                    <ul class="nav prod-cat">
+                        @{
+                            WebBanSua.Models.CuaHangBanSuaContext _context = new WebBanSua.Models.CuaHangBanSuaContext();
+                            var danhmuc = _context.DanhMucSps.ToList();
+                            
+
+                        }
+                        @foreach (var item in danhmuc)
+                        {
+                            <li>
+
+                                <a asp-action="SanPhamTheoDanhMuc" asp-controller="SanPham" asp-route-id="@item.MaDm" asp-route-tenDm="@item.TenDm"><i class="fa fa-angle-right"></i> <img src="@item.AnhDm" alt="" style="width:20px;"> @item.TenDm</a>
+                            </li>
+
+
+                        }
+
+                    </ul>
+
+                </div>
+            </section>
+
+
+            <section class="panel">
+                <header class="panel-heading">
+                    Best Seller
+                </header>
+                <div class="panel-body">
+                    <div class="best-seller">
+                        @foreach (var item in spBest)
+                        {
+                            <article class="media">
+                                <a class="pull-left thumb p-thumb">
+                                    <img src="@Url.Content(item.AnhSp)" style="width:100px;" />
+                                </a>
+                                <div class="media-body">
+                                    @if (Context.Session.GetString("MaKh") != null)
+                                    {
+                                        <a asp-action="Details" asp-route-id="@item.MaSp" class="p-head" style="text-decoration:none;">@item.TenSp</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="Login" asp-controller="Home" class="p-head" style="text-decoration:none;">@item.TenSp</a>
+                                    }
+                                    <p>@item.GiaSp.ToString("#,##0") VNĐ</p>
+                                </div>
+                            </article>
+                        }
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-md-9">
+            @if(ViewBag.sp != null)
+            {
+                <div class="alert alert-primary">
+                    @ViewBag.sp
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-primary">
+                    <p>Có @ViewBag.sum sản phẩm trong danh mục </p>
+                </div>
+            }
+            
+
+            <div class="row product-list">
+
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4" style="margin-top:30px;">
+                        <div class="card">
+                            <div class="card-img-product">
+                                <img src="@Url.Content(item.AnhSp)" alt="">
+                            </div>
+                            <div class="card-title">
+                                @item.TenSp
+                            </div>
+                            <div class="card-price">
+                                @item.GiaSp.ToString("#,##0") VNĐ
+                            </div>
+                            <div class="card-diseption">
+                               
+                                <div class="card-action">
+                                    @if (Context.Session.GetString("MaKh") != null)
+                                    {
+                                        <button> <a asp-action="Details" asp-route-id="@item.MaSp" style="text-decoration:none; color:white">Mua Ngay</a></button>
+                                        <button onclick="AddToCartList(@item.MaSp)">Thêm<i class='bx bxs-cart-add'></i></button>
+                                    }
+                                    else
+                                    {
+                                        <button> <a asp-action="Details" asp-route-id="@item.MaSp" style="text-decoration:none; color:white">Chi tiết</a></button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+
+    </script>
+</body>
+

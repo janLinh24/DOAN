@@ -1,0 +1,134 @@
+﻿@using Microsoft.AspNetCore.Http
+@using WebBanSua.Extension
+@using WebBanSua.ModelViews
+@using static WebBanSua.Models.KhachHang
+@model WebBanSua.Models.KhachHang
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_ProductLayout.cshtml";
+    var cartCheckout = Context.Session.Get<List<CartItem>>("GioHang");
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/check_out.css" />
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/checkout/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="form-validation.css" rel="stylesheet">
+    <style>
+        #HinhThucTT {
+            border: 1px solid #d2d6da;
+            border-radius: 14px;
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 6px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>THANH TOÁN</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Sản Phẩm Của Bạn</span>
+                    <span class="badge badge-secondary badge-pill">@cartCheckout.Count()</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    @foreach (var item in cartCheckout)
+                    {
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <a asp-action="Details" asp-route-id="@item.sanPham.MaSp"><img style="width:100px;" src="@Url.Content(item.sanPham.AnhSp)" alt="Product"></a>
+                                <h6 class="my-0">@item.sanPham.TenSp</h6>
+                                <small class="text-muted">Số Lượng: @item.soLuong</small>
+                            </div>
+                            <span class="text-muted">@item.TongTien.ToString("#,##0") VNĐ</span>
+                        </li>
+                    }
+
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng Tiền:</span>
+                        <strong>@cartCheckout.Sum(x=> x.TongTien).ToString("#,##0") VNĐ</strong>
+                    </li>
+
+                </ul>
+
+               
+            </div>
+            <div class="col-md-8 order-md-1">
+                <h4 class="mb-3">Thông Tin Người Nhận</h4>
+                <form asp-action="Index" class="needs-validation">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="MaKh" />
+                    <input type="hidden" asp-for="Password" />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TenKh">Tên Của Bạn</label>
+                            <input asp-for="TenKh" type="text" class="form-control" id="inputUsername" placeholder="Username">
+                            <span asp-validation-for="TenKh" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Ngaysinh">Ngày Sinh:</label>
+                            <input asp-for="Ngaysinh" type="date" class="form-control" id="inputUsername" placeholder="Username">
+                            <span asp-validation-for="Ngaysinh" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" id="inputEmail4" readonly placeholder="Email">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Phone">Điện Thoại</label>
+                        <input asp-for="Phone" type="number" class="form-control" id="inputEmail4" placeholder="Phone">
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Diachi">Địa Chỉ</label>
+                        <input asp-for="Diachi" class="form-control" id="inputEmail4" placeholder="Địa chỉ">
+                        <span asp-validation-for="Diachi" class="text-danger"></span>
+                    </div>
+
+                   
+
+                    <hr class="mb-4">
+
+                    <h4 class="mb-3">Hình Thức Thanh Toán</h4>
+
+                    <div class="d-block my-3">
+                        <p>Chọn Hình Thức Thanh Toán</p>
+                        <div class="form-group col-md-6 mb-3">
+                            <select class="form-control" id="HinhThucTT" name="HinhThucTT">
+                                <option>Thanh Toán Khi Nhận</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+
+                
+                    <hr class="mb-4">
+                    <button type="submit" value="Create" class="btn btn-primary">Mua Hàng</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="/docs/4.3/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="https://getbootstrap.com/docs/4.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+    <script src="https://getbootstrap.com/docs/4.3/examples/checkout/form-validation.js"></script>
+</body>
+
+

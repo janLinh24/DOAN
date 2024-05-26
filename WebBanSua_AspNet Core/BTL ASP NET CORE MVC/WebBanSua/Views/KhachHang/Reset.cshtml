@@ -1,0 +1,55 @@
+﻿@* @{
+    ViewBag.Title = "Reset Password";
+}
+@model WebBanSua.Models.User
+<h2>Reset Password</h2>
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <p>@ViewBag.Message</p>
+}
+@using (Html.BeginForm("Reset", "KhachHang", FormMethod.Post))
+{
+    <input type="hidden" id="token" name="token" value="@ViewBag.Token" />
+    <div class="form-group">
+        @Html.LabelFor(model => model.Password)
+        <input type="password" id="newPassword" name="newPassword" class="form-control" />
+
+    </div>
+    <button type="submit" class="btn btn-primary">Reset Password</button>
+}
+ *@
+
+@{
+    ViewBag.Title = "Reset Password";
+}
+@model WebBanSua.Models.User
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        margin-top: 100px; /* Adjust top margin as needed */
+    }
+</style>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Reset Password</h2>
+            
+            @if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                <div class="alert alert-info" role="alert">@ViewBag.Message</div>
+            }
+            <form asp-action="Reset" asp-controller="KhachHang" method="post">
+                <input type="hidden" id="token" name="token" value="@ViewBag.Token" />
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" class="form-control" />
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+            </form>
+        </div>
+    </div>
+</div>
